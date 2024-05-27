@@ -59,14 +59,3 @@ signing {
     )
     sign publishing.publications.mavenJava
 }
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            username = findProperty("ossrhUsername")?: System.getenv("OSSRH_USERNAME")
-            password = findProperty("ossrhPassword")?: System.getenv("OSSRH_PASSWORD")
-        }
-    }
-}
