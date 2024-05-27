@@ -3,7 +3,6 @@ apply plugin: 'signing'
 
 publishing {
     publications.create("mavenJava", MavenPublication) {
-        //artifactId = 'spring-ai-gemini'
         from components.java
         versionMapping {
             usage('java-api') {
@@ -39,7 +38,7 @@ publishing {
     }
     repositories {
         maven {
-            name = "MavenCentral"
+            name = "Sonatype"
             def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
