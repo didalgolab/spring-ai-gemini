@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.gradle.maven-publish'
 }
 
+apply from: '../gradle/publish-package.gradle'
 group = 'com.didalgo.ai'
-version = '1.0.0-SNAPSHOT'
+version = '0.0.2'
 
 repositories {
     mavenLocal()
@@ -56,12 +56,9 @@ tasks.named('check') {
     dependsOn integrationTest
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
+javadoc {
+    options.addBooleanOption('html5', true)
+    options.addStringOption('Xdoclint:none', '-quiet')
 }
 
 tasks.withType(PublishToMavenLocal).configureEach { it.dependsOn test }

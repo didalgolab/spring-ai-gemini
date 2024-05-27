@@ -1,0 +1,65 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+publishing {
+    publications.create("mavenJava", MavenPublication) {
+        //artifactId = 'spring-ai-gemini'
+        from components.java
+        versionMapping {
+            usage('java-api') {
+                fromResolutionOf('runtimeClasspath')
+            }
+            usage('java-runtime') {
+                fromResolutionResult()
+            }
+        }
+        pom {
+            name = 'Spring AI Gemini'
+            description = 'Spring AI based Gemini API provider'
+            url = 'https://github.com/didalgolab/spring-ai-gemini'
+            licenses {
+                license {
+                    name = 'The Apache Software License, Version 2.0'
+                    url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+            }
+            developers {
+                developer {
+                    id = 'didalgo'
+                    name = 'Mariusz Bernacki'
+                    email = 'didalgo@didalgo.com'
+                }
+            }
+            scm {
+                connection = 'scm:git:git://github.com/didalgolab/spring-ai-gemini.git'
+                developerConnection = 'scm:git:ssh://github.com/didalgolab/spring-ai-gemini.git'
+                url = 'https://github.com/didalgolab/spring-ai-gemini/'
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "Preview"
+            url = uri(layout.buildDirectory.dir("repositories/preview"))
+        }
+        maven {
+            name = "Sonatype"
+            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = findProperty("ossrhUsername")?: System.getenv("OSSRH_USERNAME")
+                password = findProperty("ossrhPassword")?: System.getenv("OSSRH_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    useInMemoryPgpKeys(
+            findProperty("signingKeyId")?: System.getenv("OSSRH_SIGNING_KEY_ID"),
+            findProperty("signingKey")?: System.getenv("OSSRH_SIGNING_KEY"),
+            findProperty("signingPassword")?: System.getenv("OSSRH_SIGNING_PASSWORD")
+    )
+    sign publishing.publications.mavenJava
+}
