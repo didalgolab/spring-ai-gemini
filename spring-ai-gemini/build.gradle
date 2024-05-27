@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'org.gradle.maven-publish'
+}
+
+group = 'com.didalgo.ai'
+version = '1.0.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    implementation 'org.springframework.ai:spring-ai-core:1.0.0-SNAPSHOT'
+    implementation 'org.springframework.ai:spring-ai-retry:1.0.0-SNAPSHOT'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.springframework.ai:spring-ai-test:1.0.0-SNAPSHOT'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withJavadocJar()
+    withSourcesJar()
+}
+
+test {
+    useJUnitPlatform {
+        filter {
+            includeTestsMatching "*Test"
+            excludeTestsMatching "*IT"
+        }
+    }
+}
+
+def integrationTest = tasks.register("integrationTest", Test) {
+    useJUnitPlatform {
+        filter {
+            includeTestsMatching '*IT'
+            includeTestsMatching 'IT*'
+            includeTestsMatching '*ITCase'
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn integrationTest
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+tasks.withType(PublishToMavenLocal).configureEach { it.dependsOn test }

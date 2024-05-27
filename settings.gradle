@@ -1,0 +1,5 @@
+rootProject.name = 'gemini'
+
+include 'spring-ai-gemini-starter'
+include 'spring-ai-gemini'
+
