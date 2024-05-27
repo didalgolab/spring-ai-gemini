@@ -19,11 +19,12 @@ jobs:
 
       - name: Publish Artifact
         env:
-          RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           OSSRH_SIGNING_KEY_ID: ${{ secrets.OSSRH_SIGNING_KEY_ID }}
           OSSRH_SIGNING_PASSWORD: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
           OSSRH_SIGNING_KEY: ${{ secrets.OSSRH_SIGNING_KEY }}
+          RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}
         run: ./gradlew publish
         # run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
