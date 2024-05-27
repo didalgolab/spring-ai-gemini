@@ -26,5 +26,5 @@ jobs:
           OSSRH_SIGNING_PASSWORD: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
           OSSRH_SIGNING_KEY: ${{ secrets.OSSRH_SIGNING_KEY }}
           RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}
-        run: ./gradlew publish
+        run: ./gradlew publish closeStagingRepositories
         # run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository

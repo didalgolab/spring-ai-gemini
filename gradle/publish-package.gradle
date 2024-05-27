@@ -39,10 +39,6 @@ publishing {
     }
     repositories {
         maven {
-            name = "Preview"
-            url = uri(layout.buildDirectory.dir("repositories/preview"))
-        }
-        maven {
             name = "Sonatype"
             def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
