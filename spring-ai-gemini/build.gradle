@@ -36,6 +36,8 @@ test {
             excludeTestsMatching "*IT"
         }
     }
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
 }
 
 def integrationTest = tasks.register("integrationTest", Test) {
@@ -46,6 +48,8 @@ def integrationTest = tasks.register("integrationTest", Test) {
             includeTestsMatching '*ITCase'
         }
     }
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
 }
 
 tasks.named('check') {
