@@ -2,7 +2,6 @@ plugins {
     id 'java'
 }
 
-apply from: '../gradle/publish-package.gradle'
 group = 'com.didalgo.ai'
 version = (findProperty('version') == 'unspecified') ? '0.0.0' : version
 
