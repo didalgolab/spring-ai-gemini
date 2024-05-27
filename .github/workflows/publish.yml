@@ -1,0 +1,29 @@
+name: Publish
+
+on:
+  release:
+    types: [ created ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Publish Artifact
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_SIGNING_KEY_ID: ${{ secrets.OSSRH_SIGNING_KEY_ID }}
+          OSSRH_SIGNING_PASSWORD: ${{ secrets.OSSRH_SIGNING_PASSWORD }}
+          OSSRH_SIGNING_KEY: ${{ secrets.OSSRH_SIGNING_KEY }}
+          RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}
+        run: ./gradlew publish

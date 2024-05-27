@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.gradle.maven-publish'
 }
 
+apply from: '../gradle/publish-package.gradle'
 group = 'com.didalgo.ai'
-version = '1.0.0-SNAPSHOT'
+version = (findProperty('version') == 'unspecified') ? '0.0.0' : version
 
 repositories {
     mavenLocal()
@@ -36,6 +36,8 @@ test {
             excludeTestsMatching "*IT"
         }
     }
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
 }
 
 def integrationTest = tasks.register("integrationTest", Test) {
@@ -46,18 +48,17 @@ def integrationTest = tasks.register("integrationTest", Test) {
             includeTestsMatching '*ITCase'
         }
     }
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
 }
 
 tasks.named('check') {
     dependsOn integrationTest
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
+javadoc {
+    options.addBooleanOption('html5', true)
+    options.addStringOption('Xdoclint:none', '-quiet')
 }
 
 tasks.withType(PublishToMavenLocal).configureEach { it.dependsOn test }

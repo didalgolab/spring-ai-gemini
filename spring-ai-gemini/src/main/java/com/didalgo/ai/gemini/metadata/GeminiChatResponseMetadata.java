@@ -3,7 +3,9 @@ package com.didalgo.ai.gemini.metadata;
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.metadata.Usage;
 
-public class GeminiChatResponseMetadata implements ChatResponseMetadata {
+import java.util.concurrent.ConcurrentHashMap;
+
+public class GeminiChatResponseMetadata extends ConcurrentHashMap<String, Object> implements ChatResponseMetadata {
 
 	private final GeminiUsage usage;
 
