@@ -4,7 +4,7 @@ plugins {
 
 apply from: '../gradle/publish-package.gradle'
 group = 'com.didalgo.ai'
-version = '0.0.2'
+version = (findProperty('version') == 'unspecified') ? '0.0.0' : version
 
 repositories {
     mavenLocal()
