@@ -1,6 +1,7 @@
 package com.didalgo.ai.gemini;
 
 import com.didalgo.ai.gemini.api.GeminiApi.FunctionCallingMode;
+import com.didalgo.ai.gemini.api.GeminiApi.SafetySetting;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -58,6 +59,12 @@ public class GeminiChatOptions
      * Optional. The mode in which function calling should execute. Defaults to {@link FunctionCallingMode#AUTO}.
      */
     private @JsonProperty("functionCallingMode") FunctionCallingMode functionCallingMode;
+
+    /**
+     * Optional. Safety settings for the chat.
+     */
+    @JsonProperty("safetySettings")
+    private List<SafetySetting> safetySettings;
 
     /**
      * Tool Function Callbacks to register with the ChatClient.
@@ -120,6 +127,14 @@ public class GeminiChatOptions
 
     public FunctionCallingMode getFunctionCallingMode() {
         return functionCallingMode;
+    }
+
+    public List<SafetySetting> getSafetySettings() {
+        return safetySettings;
+    }
+
+    public void setSafetySettings(List<SafetySetting> safetySettings) {
+        this.safetySettings = safetySettings;
     }
 
     @Override
@@ -210,6 +225,11 @@ public class GeminiChatOptions
             return this;
         }
 
+        public Builder withSafetySettings(List<SafetySetting> safetySettings) {
+            this.options.safetySettings = safetySettings;
+            return this;
+        }
+
         public GeminiChatOptions build() {
             return this.options;
         }
@@ -227,6 +247,7 @@ public class GeminiChatOptions
                 .withFunctionCallingMode(fromOptions.getFunctionCallingMode())
                 .withFunctionCallbacks(fromOptions.getFunctionCallbacks())
                 .withFunctions(fromOptions.getFunctions())
+                .withSafetySettings(fromOptions.getSafetySettings())
                 .build();
     }
 }

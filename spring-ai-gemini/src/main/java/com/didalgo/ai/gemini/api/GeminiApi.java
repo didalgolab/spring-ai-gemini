@@ -118,6 +118,29 @@ public class GeminiApi {
         }
     }
 
+    public class SafetySettings {
+
+        public static final List<SafetySetting> BLOCK_NONE;
+        public static final List<SafetySetting> BLOCK_LOW_AND_ABOVE;
+        public static final List<SafetySetting> BLOCK_MEDIUM_AND_ABOVE;
+        public static final List<SafetySetting> BLOCK_ONLY_HIGH;
+
+        static {
+            BLOCK_NONE = create(SafetySetting.HarmBlockThreshold.BLOCK_NONE);
+            BLOCK_LOW_AND_ABOVE = create(SafetySetting.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE);
+            BLOCK_MEDIUM_AND_ABOVE = create(SafetySetting.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE);
+            BLOCK_ONLY_HIGH = create(SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH);
+        }
+
+        private static List<SafetySetting> create(SafetySetting.HarmBlockThreshold threshold) {
+            return List.copyOf(
+                    SafetySetting.HarmCategory.requestAllowedSettings().stream()
+                            .map(category -> new SafetySetting(category, threshold))
+                            .toList()
+            );
+        }
+    }
+
     /**
      * Represents the content of a message in a conversation.
      *
@@ -474,7 +497,17 @@ public class GeminiApi {
             /** Sexually explicit content. */
             @JsonProperty HARM_CATEGORY_SEXUALLY_EXPLICIT,
             /** Dangerous content. */
-            @JsonProperty HARM_CATEGORY_DANGEROUS_CONTENT
+            @JsonProperty HARM_CATEGORY_DANGEROUS_CONTENT;
+
+
+            static List<HarmCategory> requestAllowedSettings() {
+                return List.of(
+                        HARM_CATEGORY_HARASSMENT,
+                        HARM_CATEGORY_HATE_SPEECH,
+                        HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                        HARM_CATEGORY_DANGEROUS_CONTENT
+                );
+            }
         }
 
         /**
@@ -482,26 +515,19 @@ public class GeminiApi {
          */
         public enum HarmBlockThreshold {
             /** Threshold is unspecified. */
-            @JsonProperty("HARM_BLOCK_THRESHOLD_UNSPECIFIED")
-            HARM_BLOCK_THRESHOLD_UNSPECIFIED,
+            @JsonProperty("UNSPECIFIED") UNSPECIFIED,
+
             /** Content with NEGLIGIBLE will be allowed. */
-            @JsonProperty("BLOCK_LOW_AND_ABOVE")
-            BLOCK_LOW_AND_ABOVE,
+            @JsonProperty("BLOCK_LOW_AND_ABOVE") BLOCK_LOW_AND_ABOVE,
+
             /** Content with NEGLIGIBLE and LOW will be allowed. */
-            @JsonProperty("BLOCK_MEDIUM_AND_ABOVE")
-            BLOCK_MEDIUM_AND_ABOVE,
+            @JsonProperty("BLOCK_MEDIUM_AND_ABOVE") BLOCK_MEDIUM_AND_ABOVE,
 
-            /**
-             * Content with NEGLIGIBLE, LOW, and MEDIUM will be allowed.
-             */
-            @JsonProperty("BLOCK_ONLY_HIGH")
-            BLOCK_ONLY_HIGH,
+            /** Content with NEGLIGIBLE, LOW, and MEDIUM will be allowed. */
+            @JsonProperty("BLOCK_ONLY_HIGH") BLOCK_ONLY_HIGH,
 
-            /**
-             * All content will be allowed.
-             */
-            @JsonProperty("BLOCK_NONE")
-            BLOCK_NONE
+            /** All content will be allowed. */
+            @JsonProperty("BLOCK_NONE") BLOCK_NONE
         }
     }
 
@@ -658,25 +684,18 @@ public class GeminiApi {
          * Enum representing the list of OpenAPI data types.
          */
         public enum Type {
-
             /** Not specified, should not be used. */
             @JsonProperty TYPE_UNSPECIFIED,
-
             /** String type. */
             @JsonProperty STRING,
-
             /** Number type. */
             @JsonProperty NUMBER,
-
             /** Integer type. */
             @JsonProperty INTEGER,
-
             /** Boolean type. */
             @JsonProperty BOOLEAN,
-
             /** Array type. */
             @JsonProperty ARRAY,
-
             /** Object type. */
             @JsonProperty OBJECT;
 
@@ -777,6 +796,7 @@ public class GeminiApi {
          * of harm for a piece of content.</p>
          */
         public enum HarmProbability {
+
             /** Probability is unspecified. */
             @JsonProperty("HARM_PROBABILITY_UNSPECIFIED")
             HARM_PROBABILITY_UNSPECIFIED,
@@ -970,6 +990,7 @@ public class GeminiApi {
                 })
                 .concatMapIterable(window -> {
                     return List.of(window);
+                    // TODO: This is a hack. We need to merge the completions correctly.
                     //final var reduce = window.reduce(MergeUtils.emptyChatCompletions(), MergeUtils::mergeChatCompletions);
                     //return List.of(reduce);
                 })

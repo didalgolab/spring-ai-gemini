@@ -15,6 +15,7 @@ import com.didalgo.ai.gemini.api.GeminiApi.ToolConfig;
 import com.didalgo.ai.gemini.metadata.GeminiChatResponseMetadata;
 import com.didalgo.ai.gemini.metadata.GeminiUsage;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -38,6 +39,7 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
@@ -56,7 +58,7 @@ public class GeminiChatModel
     /**
      * The default options used for the chat completion requests.
      */
-    private GeminiChatOptions defaultOptions;
+    private final GeminiChatOptions defaultOptions;
 
     /**
      * The retry template used to retry the Gemini API calls.
@@ -127,6 +129,11 @@ public class GeminiChatModel
             ResponseEntity<GenerateContentResponse> response = this.callWithFunctionSupport(geminiRequest);
             List<Generation> generations = Optional.ofNullable(response.getBody().candidates()).orElse(List.of())
                     .stream()
+                    .peek(candidate -> {
+                        if (candidate.content() == null) {
+                            "".toString();
+                        }
+                    })
                     .map(candidate -> candidate.content().parts())
                     .flatMap(List::stream)
                     .map(Part::text)
@@ -170,8 +177,6 @@ public class GeminiChatModel
         GenerationConfig generationConfig = this.generationConfig;
 
         String modelName = this.defaultOptions.getModel();
-        //var generativeModelBuilder = new GenerativeModel.Builder().setModelName(this.defaultOptions.getModel())
-        //        .setVertexAi(this.vertexAI);
 
         GeminiChatOptions updatedRuntimeOptions = null;
         if (prompt.getOptions() != null) {
@@ -186,14 +191,12 @@ public class GeminiChatModel
             }
         }
 
-        if (this.defaultOptions != null) {
-            functionsForThisRequest.addAll(handleFunctionCallbackConfigurations(this.defaultOptions, !IS_RUNTIME_CALL));
+        functionsForThisRequest.addAll(handleFunctionCallbackConfigurations(this.defaultOptions, !IS_RUNTIME_CALL));
 
-            if (updatedRuntimeOptions == null) {
-                updatedRuntimeOptions = GeminiChatOptions.builder().build();
-            }
-            updatedRuntimeOptions = ModelOptionsUtils.merge(updatedRuntimeOptions, this.defaultOptions, GeminiChatOptions.class);
+        if (updatedRuntimeOptions == null) {
+            updatedRuntimeOptions = GeminiChatOptions.builder().build();
         }
+        updatedRuntimeOptions = ModelOptionsUtils.merge(updatedRuntimeOptions, this.defaultOptions, GeminiChatOptions.class);
 
         if (updatedRuntimeOptions != null) {
             if (StringUtils.hasText(updatedRuntimeOptions.getModel())
@@ -224,7 +227,7 @@ public class GeminiChatModel
                 toGeminiContent(prompt),
                 tools,
                 (toolConfigBuilder == null) ? null : toolConfigBuilder.build(),
-                null,
+                (updatedRuntimeOptions == null) ? null : updatedRuntimeOptions.getSafetySettings(),
                 toGeminiSystemInstruction(prompt),
                 generationConfig
         );
@@ -305,13 +308,11 @@ public class GeminiChatModel
     }
 
     private List<Content> toGeminiContent(Prompt prompt) {
-        List<Content> contents = prompt.getInstructions()
+        return prompt.getInstructions()
                 .stream()
                 .filter(m -> m.getMessageType() == MessageType.USER || m.getMessageType() == MessageType.ASSISTANT)
                 .map(message -> new Content(toGeminiMessageType(message.getMessageType()).id(), messageToGeminiParts(message)))
                 .toList();
-
-        return contents;
     }
 
     private static Content.Role toGeminiMessageType(@NonNull MessageType type) {
