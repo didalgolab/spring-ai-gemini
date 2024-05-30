@@ -55,6 +55,8 @@ public class GeminiChatModel
 
     private static final Logger logger = LoggerFactory.getLogger(GeminiChatModel.class);
 
+    private static final List<Part> EMPTY_TEXT_PART = List.of(Part.fromText(""));
+
     /**
      * The default options used for the chat completion requests.
      */
@@ -157,7 +159,13 @@ public class GeminiChatModel
                     .map(response -> {
                         List<Generation> generations = response.candidates()
                                 .stream()
-                                .map(candidate -> candidate.content().parts())
+                                .map(candidate -> {
+                                    if (candidate.content() == null) {
+                                        // No content available in chunk when safety warning or RECITATION while streaming
+                                        return EMPTY_TEXT_PART;
+                                    }
+                                    return candidate.content().parts();
+                                })
                                 .flatMap(List::stream)
                                 .map(Part::text)
                                 .map(Generation::new)
