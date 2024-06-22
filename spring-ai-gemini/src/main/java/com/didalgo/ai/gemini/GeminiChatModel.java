@@ -131,12 +131,13 @@ public class GeminiChatModel
             ResponseEntity<GenerateContentResponse> response = this.callWithFunctionSupport(geminiRequest);
             List<Generation> generations = Optional.ofNullable(response.getBody().candidates()).orElse(List.of())
                     .stream()
-                    .peek(candidate -> {
+                    .map(candidate -> {
                         if (candidate.content() == null) {
-                            "".toString();
+                            // No content available in chunk when safety warning or RECITATION while streaming
+                            return EMPTY_TEXT_PART;
                         }
+                        return candidate.content().parts();
                     })
-                    .map(candidate -> candidate.content().parts())
                     .flatMap(List::stream)
                     .map(Part::text)
                     .map(Generation::new)
@@ -188,15 +189,10 @@ public class GeminiChatModel
 
         GeminiChatOptions updatedRuntimeOptions = null;
         if (prompt.getOptions() != null) {
-            if (prompt.getOptions() instanceof ChatOptions runtimeOptions) {
-                updatedRuntimeOptions = ModelOptionsUtils.copyToTarget(runtimeOptions, ChatOptions.class, GeminiChatOptions.class);
+            updatedRuntimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class, GeminiChatOptions.class);
 
-                functionsForThisRequest
-                        .addAll(handleFunctionCallbackConfigurations(updatedRuntimeOptions, IS_RUNTIME_CALL));
-            } else {
-                throw new IllegalArgumentException("Prompt options are not of type ChatOptions: "
-                        + prompt.getOptions().getClass().getSimpleName());
-            }
+            functionsForThisRequest
+                    .addAll(handleFunctionCallbackConfigurations(updatedRuntimeOptions, IS_RUNTIME_CALL));
         }
 
         functionsForThisRequest.addAll(handleFunctionCallbackConfigurations(this.defaultOptions, !IS_RUNTIME_CALL));

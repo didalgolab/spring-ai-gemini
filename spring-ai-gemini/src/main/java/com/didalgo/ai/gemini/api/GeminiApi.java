@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GeminiApi {
 
     public static final String DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com";
-
     public static final String DEFAULT_CHAT_MODEL = GeminiApi.ChatModel.GEMINI_1_5_FLASH_LATEST.getId();
 
     private final RestClient restClient;
