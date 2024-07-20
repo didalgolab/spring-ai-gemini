@@ -12,23 +12,23 @@ import com.didalgo.ai.gemini.api.GeminiApi.Part;
 import com.didalgo.ai.gemini.api.GeminiApi.Schema;
 import com.didalgo.ai.gemini.api.GeminiApi.Tool;
 import com.didalgo.ai.gemini.api.GeminiApi.ToolConfig;
-import com.didalgo.ai.gemini.metadata.GeminiChatResponseMetadata;
 import com.didalgo.ai.gemini.metadata.GeminiUsage;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Media;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.model.StreamingChatModel;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.model.Media;
 import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.model.function.AbstractFunctionCallSupport;
 import org.springframework.ai.model.function.FunctionCallbackContext;
@@ -177,8 +177,10 @@ public class GeminiChatModel
         });
     }
 
-    private GeminiChatResponseMetadata toChatResponseMetadata(GenerateContentResponse response) {
-        return new GeminiChatResponseMetadata(new GeminiUsage(response.usageMetadata()));
+    private ChatResponseMetadata toChatResponseMetadata(GenerateContentResponse response) {
+        return ChatResponseMetadata.builder()
+                .withUsage(new GeminiUsage(response.usageMetadata()))
+                .build();
     }
 
     private GeminiRequest createGeminiRequest(Prompt prompt) {

@@ -235,6 +235,11 @@ public class GeminiChatOptions
         }
     }
 
+    @Override
+    public GeminiChatOptions copy() {
+        return GeminiChatOptions.fromOptions(this);
+    }
+
     public static GeminiChatOptions fromOptions(GeminiChatOptions fromOptions) {
         return GeminiChatOptions.builder()
                 .withModel(fromOptions.getModel())
