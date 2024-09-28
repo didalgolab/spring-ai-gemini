@@ -124,7 +124,7 @@ public class GeminiChatModelFunctionCallingIT {
     void testMultipleFunctionCalling() {
         GeminiChatOptions promptOptions = GeminiChatOptions.builder()
                 .withModel("gemini-1.5-flash-latest")
-                .withTemperature(0f)
+                .withTemperature(0.0)
                 .withFunctions(Set.of("get_current_weather"))
                 .build();
 
@@ -149,7 +149,7 @@ public class GeminiChatModelFunctionCallingIT {
         public GeminiChatOptions geminiChatOptions() {
             return GeminiChatOptions.builder()
                     .withModel("gemini-1.5-flash-latest")
-                    .withTemperature(0.5f)
+                    .withTemperature(0.5)
                     .withFunctionCallbacks(List.of(
                             FunctionCallbackWrapper.builder(new MockMovieService.FindMoviesFunction())
                                     .withName("find_movies")

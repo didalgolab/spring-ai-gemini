@@ -33,12 +33,12 @@ public class GeminiChatOptions
     /**
      * Optional. Controls the randomness of predictions.
      */
-    private @JsonProperty("temperature") Float temperature;
+    private @JsonProperty("temperature") Double temperature;
 
     /**
      * Optional. If specified, nucleus sampling will be used.
      */
-    private @JsonProperty("topP") Float topP;
+    private @JsonProperty("topP") Double topP;
 
     /**
      * Optional. If specified, top k sampling will be used.
@@ -99,12 +99,12 @@ public class GeminiChatOptions
     }
 
     @Override
-    public Float getTemperature() {
+    public Double getTemperature() {
         return temperature;
     }
 
     @Override
-    public Float getTopP() {
+    public Double getTopP() {
         return topP;
     }
 
@@ -121,6 +121,13 @@ public class GeminiChatOptions
         return maxOutputTokens;
     }
 
+    @Override
+    @JsonIgnore
+    public Integer getMaxTokens() {
+        return getMaxOutputTokens();
+    }
+
+    @Override
     public List<String> getStopSequences() {
         return stopSequences;
     }
@@ -173,12 +180,12 @@ public class GeminiChatOptions
             return this;
         }
 
-        public Builder withTemperature(Float temperature) {
+        public Builder withTemperature(Double temperature) {
             this.options.temperature = temperature;
             return this;
         }
 
-        public Builder withTopP(Float topP) {
+        public Builder withTopP(Double topP) {
             this.options.topP = topP;
             return this;
         }
@@ -233,6 +240,18 @@ public class GeminiChatOptions
         public GeminiChatOptions build() {
             return this.options;
         }
+    }
+
+    @Override
+    @JsonIgnore
+    public Double getFrequencyPenalty() {
+        return null;
+    }
+
+    @Override
+    @JsonIgnore
+    public Double getPresencePenalty() {
+        return null;
     }
 
     @Override

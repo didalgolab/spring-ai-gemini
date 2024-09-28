@@ -57,7 +57,7 @@ public class GeminiChatModelIT {
         public GeminiChatOptions geminiChatOptions() {
             return GeminiChatOptions.builder()
                     .withModel("gemini-1.5-flash-latest")
-                    .withTemperature(0.5f)
+                    .withTemperature(0.5)
                     .build();
         }
 

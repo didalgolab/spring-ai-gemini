@@ -86,7 +86,7 @@ public class GeminiChatModel
      */
     public GeminiChatModel(GeminiApi geminiApi) {
         this(geminiApi,
-                GeminiChatOptions.builder().withModel(GeminiApi.DEFAULT_CHAT_MODEL).withTemperature(0.7f).build());
+                GeminiChatOptions.builder().withModel(GeminiApi.DEFAULT_CHAT_MODEL).withTemperature(0.7).build());
     }
 
     /**
