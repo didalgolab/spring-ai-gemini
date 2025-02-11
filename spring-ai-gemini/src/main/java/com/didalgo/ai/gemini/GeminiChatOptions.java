@@ -98,9 +98,17 @@ public class GeminiChatOptions
         return model;
     }
 
+    public void setModel(String model) {
+        this.model = model;
+    }
+
     @Override
     public Double getTemperature() {
         return temperature;
+    }
+
+    public void setTemperature(Double temperature) {
+        this.temperature = temperature;
     }
 
     @Override
@@ -108,9 +116,17 @@ public class GeminiChatOptions
         return topP;
     }
 
+    public void setTopP(Double topP) {
+        this.topP = topP;
+    }
+
     @Override
     public Integer getTopK() {
         return topK;
+    }
+
+    public void setTopK(Integer topK) {
+        this.topK = topK;
     }
 
     public Integer getCandidateCount() {
@@ -130,6 +146,10 @@ public class GeminiChatOptions
     @Override
     public List<String> getStopSequences() {
         return stopSequences;
+    }
+
+    public void setStopSequences(List<String> stopSequences) {
+        this.stopSequences = stopSequences;
     }
 
     public FunctionCallingMode getFunctionCallingMode() {
