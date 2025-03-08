@@ -1,4 +1,4 @@
-# ⚠️ **My Humble Spring AI Gemini API Provider Has Retired** ⚠️
+## ⚠️ **My Humble Spring AI Gemini API Provider Has Retired** ⚠️
 
 > [!WARNING]
 > **This repository (`spring-ai-gemini`) is no longer maintained (archived as of March 7, 2025).**
